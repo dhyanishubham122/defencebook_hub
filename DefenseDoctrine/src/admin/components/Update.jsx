@@ -18,6 +18,7 @@ function Update() {
   const [imagePreview, setImagePreview] = useState(null); // Store the preview URL
   const [purchasedLinkUrl, setPurchasedLinkUrl] = useState("");
   console.log("vook id",bookId);
+  console.log("shubam");
   console.log("ismodal:",isModalOpen);
   const fetchbooks=async()=>{
     try{
