@@ -19,6 +19,8 @@ function Update() {
   const [purchasedLinkUrl, setPurchasedLinkUrl] = useState("");
   console.log("vook id",bookId);
   console.log("ismodal:",isModalOpen);
+  console.log("ajhsfgjd");
+  console.log("master");
   const fetchbooks=async()=>{
     try{
     const response=await fetch(`http://localhost:4000/admin/books?category=${selectedCategory}&page=${currentPage}&limit=9`,
