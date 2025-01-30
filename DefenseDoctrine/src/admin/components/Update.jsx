@@ -18,10 +18,10 @@ function Update() {
   const [imagePreview, setImagePreview] = useState(null); // Store the preview URL
   const [purchasedLinkUrl, setPurchasedLinkUrl] = useState("");
   console.log("vook id",bookId);
-  console.log("shubam");
-  console.log("ismodal:",isModalOpen);
-  console.log("ajhsfgjd");
-  console.log("master");
+ 
+  // console.log("ismodal:",isModalOpen);
+  // console.log("ajhsfgjd");
+ 
   const fetchbooks=async()=>{
     try{
     const response=await fetch(`http://localhost:4000/admin/books?category=${selectedCategory}&page=${currentPage}&limit=9`,
