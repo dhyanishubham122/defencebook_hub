@@ -22,9 +22,9 @@ const storage = multer.diskStorage({
   })
   
   const upload = multer({ storage: storage })
-  router.post('/shubham',upload.single('image'),(req,res)=>{
-    res.send("uploaded");
-  })
+//   router.post('/shubham',upload.single('image'),(req,res)=>{
+//     res.send("uploaded");
+//   })
 // to add new books
 router.post('/add', verifyTokenandRole()  ,upload.single('image'),async(req,res)=>{
     try{
@@ -134,9 +134,12 @@ router.get('/book/:id',async(req,res)=>{
     }
 })
 // to update a book
-router.put('updatebook/:id',verifyTokenandRole(),async(req,res)=>{
+router.put('/updatebook/:id',verifyTokenandRole(),upload.single('image'),async(req,res)=>{
     try{
-        const {title,author,description,category, rating, pdfUrl, image, purchasedLinkUrl}=req.body;
+        const {title,author,description,category, rating, pdfUrl, purchasedLinkUrl}=req.body;
+        const image=`uploads/${req.file.filename}` ;
+        console.log("res.body is:",req.body);
+        console.log("req.file is :",image);
         const updatedBook=await Book.findByIdAndUpdate(req.params.id,{title,author,description,category, rating, pdfUrl, image, purchasedLinkUrl},{new:true});
         if (!updatedBook) {
             return res.status(404).json({ message: 'Book not found' });

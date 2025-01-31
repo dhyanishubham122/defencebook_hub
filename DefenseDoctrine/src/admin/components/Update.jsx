@@ -1,5 +1,7 @@
 import React from 'react'
-import { useEffect,useState } from 'react'
+import { useEffect,useState,useRef} from 'react'
+import { ToastContainer, toast } from 'react-toastify'; // For toast notifications
+import 'react-toastify/dist/ReactToastify.css'; // Toast styles
 function Update() {
  const categories=['war','victories','training','defence','terrorism','officertalk','other']
  const [books,setBooks]=useState([]);
@@ -21,7 +23,8 @@ function Update() {
  
   // console.log("ismodal:",isModalOpen);
   // console.log("ajhsfgjd");
- 
+  const fileInputRef = useRef(null);
+
   const fetchbooks=async()=>{
     try{
     const response=await fetch(`http://localhost:4000/admin/books?category=${selectedCategory}&page=${currentPage}&limit=9`,
@@ -60,7 +63,7 @@ function Update() {
     console.log("category is:",e.target.value);
     setCategory(e.target.value);
   })
-  const handleformsubmit=(e)=>{
+  const handleformsubmit=async (e)=>{
     e.preventDefault();
     const formData = new FormData();
     formData.append("title", title);
@@ -71,10 +74,49 @@ function Update() {
     formData.append("pdfUrl", pdfUrl);
     formData.append("image", image); // Append the image file
     formData.append("purchasedLinkUrl", purchasedLinkUrl);
- console.log("form data is :",formData);
- for (let [key, value] of formData.entries()) {
-  console.log(key, value);
+    console.log("form dta is :",formData);
+    const tokendat=JSON.parse(localStorage.getItem('admin'));
+    const token=tokendat.token;
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+     try{
+ const response=await fetch(`http://localhost:4000/admin/updatebook/${bookId}`,{
+  method:'PUT',
+  headers:{
+    
+    'Authorization':`Bearer ${token}`
+  },
+    body:formData
+ })
+ if(!response.ok){
+  console.log("response",response);
+  throw new Error('Failed to fetch books');
+ }
+ setAuthor('');
+ setBookId('');
+ setCategory('');
+ setDescription('');
+ setImage('');
+ setTitle('');
+ setPdfUrl('');
+ setPurchasedLinkUrl('');
+ setImage(null);
+ if (fileInputRef.current) {
+  fileInputRef.current.value = ''; // Clear the file input
 }
+// toast.success('Book updated successfully!');
+alert('Book updated successfully');
+
+  setIsModalOpen(false);
+
+const mesage=await response.json();
+console.log("message:",mesage);
+// alert(mesage);
+     }
+     catch(err){
+      console.log(err);
+     }
   }
 
   return (
@@ -122,26 +164,28 @@ function Update() {
     <form className="overflow-y-auto flex-1" onSubmit={handleformsubmit}>
       <div className="mb-4">
 
-        {books.map((book)=>{
+        {/* {books.map((book)=>{
           return(
             <div key={book.id}>
+              setBookId({book._id})
               <label className="block text-sm font-medium text-gray-700" >Id:{book._id}</label>
              </div>
           )
-        })}
-        <label className="block text-sm font-medium text-gray-700" value={title} onChange={(e)=>{setTitle(e.target.value)}}>Title</label>
+        })} */}
+        <label className="block text-sm font-medium text-gray-700" >Title</label>
         <input
-          type="text"
+          type="text" value={title} onChange={(e)=>{setTitle(e.target.value)}}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           placeholder="Enter title"
         />
-        <label className="block text-sm font-medium text-gray-700" value={author} onChange={(e)=>{setAuthor(e.target.value)}}>Author</label>
+        <label className="block text-sm font-medium text-gray-700" >Author</label>
         <input
           type="text"
+          value={author} onChange={(e)=>{setAuthor(e.target.value)}}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           placeholder="Enter author"
         />
-    <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+    <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
                         
 
                           
@@ -175,7 +219,7 @@ function Update() {
           placeholder="Enter pdf url"
         />
         <label className='block text-sm font medium text-gray-700'>Image</label>
-        <input type="file"             accept="image/*"
+        <input type="file"    ref={fileInputRef}         accept="image/*"
   onChange={handelImagechange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"/>
       </div>
   
