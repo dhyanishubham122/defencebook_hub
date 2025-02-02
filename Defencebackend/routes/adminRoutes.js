@@ -1,6 +1,7 @@
 const express=require('express');
 const bcrypt= require('bcrypt');
 const multer=require('multer');
+const axios = require('axios');
 
 const jwt= require('jsonwebtoken');
 const Admin=require('../models/Admin');
@@ -71,6 +72,34 @@ router.post('/login',async(req,res)=>{
         console.log(`Error:${error}`);
     }
 });
+
+router.put('/profileupdate',verifyTokenandRole(),async(req,res)=>{
+    const {email,password,newpassword}=req.body;
+    console.log("emai is:",email);
+    console.log("password is:",password);
+    console.log("newpassword is:",newpassword);
+
+  try{
+   const admin= await Admin.findOne({email})
+    if(!admin)
+        return res.status(400).json({message:'Invalid email or password/ No admin'});
+   const isMatch=await bcrypt.compare(password,admin.password);
+   if(!isMatch)
+    return res.status(400).json({ message: 'Invalid email or password' });
+   const hashedNewPassword = await bcrypt.hash(newpassword, 10);
+   const updatedAdmin = await Admin.findByIdAndUpdate(
+    admin._id,
+    { $set: { password: hashedNewPassword } },
+    { new: true }
+);
+
+return res.status(200).json({ message: 'Password updated successfully' });
+}
+  catch(err){
+    console.log(`error is ${err}`);
+  }
+});
+
 router.get('/profile',verifyTokenandRole(),async(req,res)=>{
    try{
     const admin=await Admin.findById(req.user.id).select('-password');
@@ -87,19 +116,6 @@ router.get('/profile',verifyTokenandRole(),async(req,res)=>{
 //  CRUD routes 
 
 
-
-
-// to get all books
-// router.get('/books',async(req,res)=>{
-//     try{
-//         const books=await Book.find();
-//         res.status(200).json(books);
-//     }
-//     catch(error){
-//         console.log(error);
-//         res.status(500).json({message:'server error'});
-//     }
-// });
 router.get('/books', async (req, res) => {
     try {
         const { category, page = 1, limit = 9 } = req.query;
@@ -152,7 +168,7 @@ router.put('/updatebook/:id',verifyTokenandRole(),upload.single('image'),async(r
     }
 })
 // to delete a book
-router.delete('/delete', verifyTokenandRole('superadmin'),async(req,res)=>{
+router.delete('/delete/:id', verifyTokenandRole('superadmin'),async(req,res)=>{
       try{
         const deletedBook = await Book.findByIdAndDelete(req.params.id);
         if (!deletedBook) {
@@ -181,5 +197,36 @@ router.get('category/:category',async(req,res)=>{
         res.status(500).json({message:'server error'});
     }
 })
+
+// for ai
+router.post('/api/openai', async (req, res) => {
+    const { prompt } = req.body;
+  
+    if (!prompt) {
+      return res.status(400).json({ error: 'Prompt is required' });
+    }
+  
+    try {
+      const response = await axios.post(
+        'https://api.openai.com/v1/chat/completions',
+        {
+          model: 'gpt-3.5-turbo',
+          messages: [{ role: 'user', content: prompt }],
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+  
+      res.json({ response: response.data.choices[0].message.content });
+    } catch (error) {
+      console.error('OpenAI API Error:', error.response?.data || error.message);
+      res.status(500).json({ error: 'Failed to fetch AI response' });
+    }
+  });
+  
 
 module.exports=router;

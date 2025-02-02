@@ -57,4 +57,4 @@ const createSuperAdminUser = async() =>{
     }
 };
 // createAdminUser();
-// createSuperAdminUser();
+createSuperAdminUser();
