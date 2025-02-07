@@ -32,12 +32,7 @@ const AdminRouter = () => {
       /> */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard  /></ProtectedRoute>}/>
 
-            {/* <Route path="/profile" element={ <div>
-              <h1>Admin profile</h1>
-              <button onClick={logout}>LOgout</button>
-
-              <p>Welcome  to the admin dashboard!</p>
-            </div>} /> */}
+            
       </Routes>
       
     
