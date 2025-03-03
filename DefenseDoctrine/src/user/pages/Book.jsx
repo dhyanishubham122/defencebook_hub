@@ -5,24 +5,34 @@ import axios from 'axios';
 function Book() {
     const [books, setBooks] = useState([]);
     const [error, setError] = useState('');  // Store "No results found" message
+    const [featuredbooks,setFeaturedbooks]=useState([]);
     const [filters, setFilters] = useState({
         author: '',
         title: '',
         category: '',
     });
-
+    const queryparam=new URLSearchParams(location.search);
+    const category=queryparam.get("category");
+    console.log("dfgsdhd category is:",category);
     useEffect(() => {
         const fetchFeaturedBooks = async () => {
             try {
-                const response = await axios.get('http://localhost:4000/user/book'); 
+                const response = await axios.get(`http://localhost:4000/user/book`); 
                 setBooks(response.data);
+                if (category) {
+                    setFeaturedbooks(response.data.filter(book => book.category === category));
+                } else {
+                    setFeaturedbooks(response.data);
+                }
                 setError('');  // Clear error on successful fetch
             } catch (error) {
                 console.error('Error fetching books:', error);
             }
         };
-        fetchFeaturedBooks();
-    }, []);
+        fetchFeaturedBooks();   
+    }, [category]);
+
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -49,14 +59,14 @@ function Book() {
 
             if (data.length === 0) {
                 setError("No books found matching your criteria.");
-                setBooks([]);  // Clear books list
+                setFeaturedbooks([]);  // Clear books list
             } else {
-                setBooks(data);
+                setFeaturedbooks(data);
                 setError("");  // Clear error if results are found
             }
         } catch (error) {
             setError("No books found matching your criteria.");  
-            setBooks([]); // Ensure books are cleared when no result is found
+            setFeaturedbooks([]); // Ensure books are cleared when no result is found
             console.error("Error fetching books:", error.message);
         }
     };
@@ -128,8 +138,8 @@ function Book() {
 
             {/* Book List */}
             <div className="grid grid-cols-1 pt-4 md:grid-cols-3 gap-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400">
-                {books.length > 0 ? (
-                    books.map((book) => (
+                {featuredbooks.length > 0 ? (
+                    featuredbooks.map((book) => (
                         <div key={book._id} className="flex justify-center max-w-[300px] mx-auto pb-[100px]">
                             <BookCard book={book} />
                         </div>

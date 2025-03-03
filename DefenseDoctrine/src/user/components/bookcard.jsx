@@ -1,8 +1,13 @@
 import React from 'react';
-
+import {useNavigate} from "react-router-dom"
+import {useState, useEffect} from 'react';
 const BookCard = ({ book }) => {
+  const navigate=useNavigate();
+  const handledetails=(()=>{
+    navigate(`/bookdetails?title=${encodeURIComponent(book.title)}`);
+  })
   return (
-    <div className="w-72 bg-white/80 backdrop-blur-md rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-200 hover:border-gray-300">
+    <div className="w-72 bg-white/80 backdrop-blur-md rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-200 hover:border-gray-300" onClick={handledetails}>
       <img
         src={`http://localhost:4000/${book.image}`}
         alt={book.title}

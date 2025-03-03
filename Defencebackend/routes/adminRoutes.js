@@ -9,51 +9,80 @@ const Book=require('../models/Books');
 const router=express.Router();
 const path=require('path');
 const verifyTokenandRole=require('../middleware/authAdminMiddleware');
+const fs = require("fs");
 
-const storage = multer.diskStorage({
+const ensureDirectoryExists = (directory) => {
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory, { recursive: true });
+    }
+  };
+  
+  const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadPath = path.join(__dirname, '../uploads');
-        console.log('File will be saved to:', uploadPath);  // Optional debugging line
-        cb(null, uploadPath);
+      let uploadPath;
+  
+      if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+        uploadPath = path.join(__dirname, "../uploads");
+      } else if (file.mimetype === "application/pdf") {
+        uploadPath = path.join(__dirname, "../uploads/pdf");
+      } else {
+        return cb({ message: "Unsupported file format" }, false);
+      }
+  
+      ensureDirectoryExists(uploadPath); // Ensure the directory exists
+      cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
-        const filename = Date.now() + '-' + file.originalname;
-        cb(null, filename )
-    }
-  })
+      const filename = Date.now() + "-" + file.originalname;
+      cb(null, filename);
+    },
+  });
   
-  const upload = multer({ storage: storage })
-//   router.post('/shubham',upload.single('image'),(req,res)=>{
-//     res.send("uploaded");
-//   })
-// to add new books
-router.post('/add', verifyTokenandRole()  ,upload.single('image'),async(req,res)=>{
-    try{
-       const {title,author,description,category, rating, pdfUrl, purchasedLinkUrl}=req.body;
-    //    const image = req.file ? req.file.path : ''; // Get the file path
-       const image=`uploads/${req.file.filename}` ;// Save the relative path
-       const existingBook = await Book.findOne({ title });
-       if (existingBook) {
-        return res.status(400).json({ message: 'Book already exists in the database.' });
+  const upload = multer({ storage: storage });
+  
+  // to add new books
+  router.post(
+    "/add",
+    verifyTokenandRole(),
+    upload.fields([
+      { name: "image", maxCount: 1 },
+      { name: "pdf", maxCount: 1 },
+    ]),
+    async (req, res) => {
+      try {
+        const { title, author, description, category, rating, purchasedLinkUrl } = req.body;
+  
+        // Extract uploaded file paths
+        const image = req.files["image"] ? `uploads/${req.files["image"][0].filename}` : "";
+        const pdfUrl = req.files["pdf"] ? `uploads/pdf/${req.files["pdf"][0].filename}` : "";
+  
+        // Check if the book already exists
+        const existingBook = await Book.findOne({ title });
+        if (existingBook) {
+          return res.status(400).json({ message: "Book already exists in the database." });
         }
-        const newBook= new Book({
-            title,
-            author,
-            description,
-            category,
-            rating,
-            pdfUrl,
-            image,
-            purchasedLinkUrl
-        })
+  
+        // Create and save the book
+        const newBook = new Book({
+          title,
+          author,
+          description,
+          category,
+          rating,
+          pdfUrl,
+          image,
+          purchasedLinkUrl,
+        });
+  
         await newBook.save();
-        return res.status(200).json({message:'done'});
+        return res.status(200).json({ message: "Book added successfully!", book: newBook });
+      } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ message: `Server Error: ${error.message}` });
+      }
     }
-    catch(error){
-        console.log(error);
-        res.status(301).json({message:`${error}`});
-    }
-})
+  );
+  
 
 router.post('/login',async(req,res)=>{
     const {email,password}=req.body;

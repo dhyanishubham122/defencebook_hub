@@ -1,8 +1,9 @@
 import React from 'react';
 import {useNavigate} from "react-router-dom"
 const FlipCard = ({ category, description }) => {
+  const navigate=useNavigate();
   const handelClick=()=>{
-    alert(category);
+    navigate(`/book?category=${encodeURIComponent(category)}`);
   }
   return (
     <div className="flip-card w-64 h-64 perspective cursor-pointer" onClick={handelClick}>

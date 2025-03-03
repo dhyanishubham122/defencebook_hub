@@ -26,13 +26,17 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
 import AuthProvider from "./context/AuthContext.jsx";
-
+import UserAuthProvider from "./context/UserAuthContext.jsx"
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>
       <AuthProvider>
+      <UserAuthProvider>
+
         <App />  {/* Directly render App, don't put it inside Routes */}
-      </AuthProvider>
+        </UserAuthProvider>
+      </AuthProvider> 
+
     </Router>
   </StrictMode>
 );

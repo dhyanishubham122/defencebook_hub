@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useRef } from "react";
+import React, { useState, useRef } from "react";
+
 const Add = () => {
   // State to manage form data
   const [title, setTitle] = useState("");
@@ -7,13 +7,15 @@ const Add = () => {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [rating, setRating] = useState("");
-  const [pdfUrl, setPdfUrl] = useState("");
+  const [pdfUrl, setPdfUrl] = useState(null);
   const [image, setImage] = useState(null); // Store the image file
   const [imagePreview, setImagePreview] = useState(null); // Store the preview URL
   const [purchasedLinkUrl, setPurchasedLinkUrl] = useState("");
   const tokendata = JSON.parse(localStorage.getItem("admin"));
-  const token = tokendata.token;
-  const fileinputRef= useRef(null);
+  const token = tokendata ? tokendata.token : null;
+  const fileinputRef = useRef(null);
+  const pdfInputRef = useRef(null); // Add this line
+
   const categories = [
     "war",
     "victories",
@@ -24,13 +26,18 @@ const Add = () => {
     "other",
   ];
 
-  const hadleCategoryChange = (e) => {
+  const handleCategoryChange = (e) => {
     setCategory(e.target.value);
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!token) {
+      alert("Admin token not found. Please log in.");
+      return;
+    }
 
     // Create a FormData object to send the file and other form data
     const data = new FormData();
@@ -39,7 +46,7 @@ const Add = () => {
     data.append("description", description);
     data.append("category", category);
     data.append("rating", rating);
-    data.append("pdfUrl", pdfUrl);
+    data.append("pdf", pdfUrl); // Append the PDF file
     data.append("image", image); // Append the image file
     data.append("purchasedLinkUrl", purchasedLinkUrl);
 
@@ -66,12 +73,12 @@ const Add = () => {
       setDescription("");
       setCategory("");
       setRating("");
-      setPdfUrl("");
+      setPdfUrl(null);
       setImage(null);
       setImagePreview(null); // Reset the image preview
       setPurchasedLinkUrl("");
-      if(fileinputRef.current)
-        fileinputRef.current.value = ""; // Reset the file input
+      if (fileinputRef.current) fileinputRef.current.value = ""; // Reset the image file input
+      if (pdfInputRef.current) pdfInputRef.current.value = ""; // Reset the PDF file input
     } catch (error) {
       console.error("Error:", error);
       alert("Failed to add data. Please try again.");
@@ -94,8 +101,13 @@ const Add = () => {
     }
   };
 
+  const handlePdfChange = (e) => {
+    const file = e.target.files[0];
+    setPdfUrl(file);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 ">
+    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
           Add New Book
@@ -151,11 +163,11 @@ const Add = () => {
             <select
               id="category"
               value={category}
-              onChange={hadleCategoryChange}
+              onChange={handleCategoryChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="disable">Choose a category</option>
+              <option value="">Choose a category</option>
               {categories.map((cat, index) => (
                 <option key={index} value={cat}>
                   {cat}
@@ -184,9 +196,10 @@ const Add = () => {
               PDF URL:
             </label>
             <input
-              type="url"
-              value={pdfUrl}
-              onChange={(e) => setPdfUrl(e.target.value)}
+              type="file"
+              accept="application/pdf"
+              ref={pdfInputRef}
+              onChange={handlePdfChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -200,7 +213,7 @@ const Add = () => {
             <input
               type="file"
               accept="image/*"
-              ref={fileinputRef}  
+              ref={fileinputRef}
               onChange={handleImageChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"

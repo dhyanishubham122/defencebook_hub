@@ -33,7 +33,7 @@ function Hero() {
             <p className="text-xl text-gray-600 mt-4">{selectedBook.description}</p>
             <a href={selectedBook.purchasedLinkUrl} target="_blank" rel="noopener noreferrer">
   <button className="mt-8 bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 transform hover:scale-105">
-    Order Now
+    Purchased Link
   </button>
 </a>
           </>

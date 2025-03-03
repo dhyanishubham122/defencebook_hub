@@ -2,6 +2,203 @@ const express=require('express');
 const Book=require('../models/Books');
 const router=express.Router();
 const path=require('path');
+const jwt=require('jsonwebtoken');
+const bcrypt=require("bcryptjs");
+const User =require('../models/User')
+const authUserMiddleware=require('../middleware/authUserMiddleware')
+// chat  routes 
+const Conversation = require("../models/conversation");
+// Start a new conversation
+  router.post('/conversation', async (req, res) => {
+    try {
+      const { senderId, receiverId } = req.body;
+
+      let conversation = await Conversation.findOne({
+        participants: { $all: [senderId, receiverId] }
+      });
+
+      if (!conversation) {
+        // No conversation found, create a new one
+        conversation = new Conversation({
+          participants: [senderId, receiverId],
+          messages: [],
+          lastMessage: null,
+        });
+
+        await conversation.save();
+      }
+
+      res.status(200).json(conversation);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  router.post('/message', async (req, res) => {
+    try {
+      const { conversationId, senderId, content } = req.body;
+  
+      let newMessage = {
+        sender: senderId,
+        content,
+        timestamp: new Date(),
+        read: false,
+      };
+  
+      let conversation = await Conversation.findByIdAndUpdate(
+        conversationId,
+        { 
+          $push: { messages: newMessage }, 
+          $set: { lastMessage: newMessage }
+        },
+        { new: true } // Return updated conversation
+      );
+  
+      if (!conversation) {
+        return res.status(404).json({ error: "Conversation not found" });
+      }
+  
+      res.status(200).json(conversation);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+  
+  router.get('/chat/:conversationId', async (req, res) => {
+    try {
+      const { conversationId } = req.params;
+      let conversation = await Conversation.findById(conversationId);
+      
+      if (!conversation) {
+        return res.status(404).json({ error: "Conversation not found" });
+      }
+      
+      const messages = conversation.messages || [];  // Ensure messages is always an array
+      
+      if (messages.length === 0) {
+        return res.status(201).json({ message: "No messages" });  // Use return to prevent multiple responses
+      }
+      
+      return res.status(200).json(messages);  // Always use return when sending a response
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Server error" });  // Ensure return in catch block
+    }
+  });
+  
+  
+// end chat routes 
+
+
+
+
+router.get('/profile',authUserMiddleware,async(req,res)=>{
+  try{
+   const data=req.user;
+  
+   res.status(200).json(data);
+  }
+  catch(err){
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+})
+
+router.post('/login',async(req,res)=>{
+  try{
+    const {email,password}=req.body;
+    const user=await User.findOne({email});
+    if(!user) 
+      return res.status(400).json({message:'Invalid email or password'})
+
+    const isMatch=await bcrypt.compare(password,user.password);
+    if(!isMatch)
+      return res.status(400).json({message:'Invalid credential admin'});
+    const token=jwt.sign({id:user._id,name:user.username,email:user.email}, process.env.JWT_SECRET,{expiresIn:'1h'});
+
+    res.json({token});
+
+}
+catch(err){
+  console.log(err);
+}
+})
+router.post('/signup', async (req, res) => {
+  try {
+      const { username, email, password } = req.body;
+
+      // Check if the user already exists
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+          return res.status(409).json({ message: 'User already exists' });
+      }
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Create and save the new user
+      const user = new User({ username, email, password: hashedPassword });
+      await user.save();
+
+      res.status(201).json({ message: 'User created successfully' });
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.put("/toggle-chat", authUserMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.chatEnabled = !user.chatEnabled;
+    await user.save();
+
+    return res.status(200).json({ 
+      chatEnabled: user.chatEnabled, 
+      message: `Chat ${user.chatEnabled ? "enabled" : "disabled"}` 
+    });
+
+  } catch (err) {
+    console.log("Error toggling chat:", err); 
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.get("/chat-status",authUserMiddleware,async(req,res)=>{
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+      }
+      return res.status(200).json({ chatEnabled: user.chatEnabled });
+  }
+  catch(err){
+    console.log("Error getting chat status:",err);
+  }
+})
+router.get("/online-user",authUserMiddleware,async(req,res)=>{
+  try{
+   const userId=req.user.id;
+   
+   const user=await User.find({chatEnabled:true})
+   if(!user){
+    return res.status(404).json({message:"No user online"})
+   }
+   return res.status(200).json({onlineUsers:user})
+  }
+  catch(err){
+    console.log("Error getting online user:",err);
+  }
+})
+
 // router.get('/book',async(req,res)=>{
 //     try{
 //         const {category,title,author}=req.query;
@@ -48,6 +245,10 @@ router.get('/book', async (req, res) => {
       res.status(500).json({ message: err.message });
   }
 });
+
+
+
+
 
 
 router.get('/book/:id',async(req,res)=>{

@@ -40,6 +40,14 @@ function Navbar() {
           </li>
           <li>
             <Link
+              to="/chat"
+              className="text-white hover:text-green-300 text-lg font-semibold transition duration-300 relative after:content-[''] after:absolute after:left-0 after:-bottom-1 after:w-0 after:h-1 after:bg-green-300 after:transition-all after:duration-300 hover:after:w-full"
+            >
+              Chat
+            </Link>
+          </li>
+          <li>
+            <Link
               to="/contact"
               className="text-white hover:text-green-300 text-lg font-semibold transition duration-300 relative after:content-[''] after:absolute after:left-0 after:-bottom-1 after:w-0 after:h-1 after:bg-green-300 after:transition-all after:duration-300 hover:after:w-full"
             >
@@ -99,6 +107,15 @@ function Navbar() {
                 onClick={() => setIsMenuOpen(false)} // Close menu on click
               >
                 About
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/Chat"
+                className="text-white hover:text-green-300 text-lg font-semibold transition duration-300"
+                onClick={() => setIsMenuOpen(false)} // Close menu on click
+              >
+                Chat
               </Link>
             </li>
             <li>
