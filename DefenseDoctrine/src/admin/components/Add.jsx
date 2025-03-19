@@ -2,6 +2,9 @@ import React, { useState, useRef } from "react";
 
 const Add = () => {
   // State to manage form data
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
@@ -51,7 +54,7 @@ const Add = () => {
     data.append("purchasedLinkUrl", purchasedLinkUrl);
 
     try {
-      const response = await fetch("http://localhost:4000/admin/add", {
+      const response = await fetch(`${apiUrl}/admin/add`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`, // Include the token
