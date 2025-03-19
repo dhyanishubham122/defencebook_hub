@@ -15,7 +15,7 @@ const authAdminMiddleware=(requiredrole=null)=>{
             console.log("req.user.role roel is :",req.user.role);
             if(requiredrole && req.user.role!==requiredrole){
                 console.log("in if ");
-                res.status(403).json({message:'Access denied inssuuficent permission'});}
+                return res.status(403).json({message:'Access denied inssuuficent permission'});}
             next();
         }        
         catch(error){

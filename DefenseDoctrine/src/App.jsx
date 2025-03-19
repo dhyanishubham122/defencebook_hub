@@ -1,17 +1,17 @@
-import { useState } from 'react'
-import Nav from './components/partials/nav'
-import Hero from './components/Hero/hero'
-import AdminLogin from "../src/admin/pages/AdminLogin.jsx";
-function App() {
-  const [count, setCount] = useState(0)
+import { Routes, Route } from "react-router-dom";
+import UserRouter from "./user/userRouter.jsx";
+import AdminRouter from "./admin/adminrouter.jsx";
 
+function App() {
   return (
-    <>
-    <Nav/>
-    <Hero/>
-  
-    </>
-  )
+    <Routes>
+      {/* User Routes */}
+      <Route path="/*" element={<UserRouter />} />
+
+      {/* Admin Routes */}
+      <Route path="admin/*" element={<AdminRouter />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
