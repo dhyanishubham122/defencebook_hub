@@ -130,13 +130,13 @@ router.get('/auth/google',passport.authenticate("google",{scope:["profile","emai
 // }))
 router.get( "/auth/google/callback",  passport.authenticate("google", { session: false }),(req, res) => {
     if (!req.user) {
-      return res.redirect("http://localhost:5173/login");
+      return res.redirect("https://defencebook-hub-liard.vercel.app/login");
     }
 
     const token = req.user.token;
     // Redirect to frontend with token
     // res.redirect(`http://localhost:5173/chat?token=${token}`);
-    res.redirect(`http://localhost:5173/google-auth-handler?token=${token}`);
+    res.redirect(`https://defencebook-hub-liard.vercel.app/google-auth-handler?token=${token}`);
 
   }
 );
