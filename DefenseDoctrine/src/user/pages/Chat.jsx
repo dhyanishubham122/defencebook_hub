@@ -3,8 +3,8 @@ import { UserAuthContext } from "../../context/UserAuthContext";
 import ChatBox from "../components/ChatBox";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
-
-const socket = io("http://localhost:4000", { autoConnect: false }); // Prevent auto-connect
+const apiUrl = import.meta.env.VITE_API_URL;
+const socket = io(`${apiUrl}`, { autoConnect: false }); // Prevent auto-connect
 
 function Chat() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ function Chat() {
 
     if (token) {
       // Store token in localStorage & AuthContext
-      login({ token });
+      login({ token }); 
       localStorage.setItem("User", JSON.stringify({ token }));
 
       // Remove token from URL after storing
@@ -47,7 +47,7 @@ function Chat() {
 
     const fetchProfile = async () => {
       try {
-        const response = await fetch("http://localhost:4000/user/profile", {
+        const response = await fetch(`${apiUrl}/user/profile`, {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -73,7 +73,7 @@ function Chat() {
     if (!token) return;
     const fetchChatStatus = async () => {
       try {
-        const response = await fetch("http://localhost:4000/user/chat-status", {
+        const response = await fetch(`${apiUrl}/user/chat-status`, {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -113,7 +113,7 @@ function Chat() {
 
   const toggleStatus = async () => {
     try {
-      const response = await fetch("http://localhost:4000/user/toggle-chat", {
+      const response = await fetch(`${apiUrl}/user/toggle-chat`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -127,7 +127,7 @@ function Chat() {
 
   const initiateConversation = async (receiverId, name) => {
     try {
-      const response = await fetch("http://localhost:4000/user/conversation", {
+      const response = await fetch(`${apiUrl}/user/conversation`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -149,7 +149,7 @@ function Chat() {
 
   const fetchMessages = async (conversationId,receiverId) => {
     try {
-      const response = await fetch(`http://localhost:4000/user/chat/${conversationId}`, {
+      const response = await fetch(`${apiUrl}/user/chat/${conversationId}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -164,7 +164,7 @@ function Chat() {
 
   const readmessages=async (conversationid,receiverId)=>{
     try{
-      const response=await fetch("http://localhost:4000/user/markasread",{
+      const response=await fetch(`${apiUrl}/user/markasread`,{
         method:"POST",
         headers:{
           "Content-Type": "application/json",

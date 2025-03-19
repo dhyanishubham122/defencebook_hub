@@ -8,10 +8,12 @@ const UserSignUp = () => {
     const [password, setPassword] = useState("");
     const [error,setError]=useState('');
     const navigate=useNavigate();
+    const apiUrl = import.meta.env.VITE_API_URL;
+  
     const handelSubmit =async(e)=>{
         e.preventDefault();
         try{
-        const response = await fetch('http://localhost:4000/user/signup', {
+        const response = await fetch(`${apiUrl}/user/signup`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

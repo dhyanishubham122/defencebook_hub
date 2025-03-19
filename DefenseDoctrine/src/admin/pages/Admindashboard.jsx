@@ -10,7 +10,8 @@ import Delete from '../components/Delete';
 import { ChevronDown,Search } from "lucide-react";
 function Admindashboard() {
   const { logout } = useContext(AuthContext);
-
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
   const token = localStorage.getItem('admin');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -46,7 +47,7 @@ const [isLoading, setIsLoading] = useState(false);
   
     setIsLoading(true);
     try {
-      const response = await axios.post('http://localhost:4000/admin/api/openai', { prompt: searchQuery });
+      const response = await axios.post(`${apiUrl}/admin/api/openai`, { prompt: searchQuery });
       setAiResponse(response.data.response);
     } catch (error) {
       console.error('Error fetching AI response:', error);

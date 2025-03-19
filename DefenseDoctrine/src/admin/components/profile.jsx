@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 
 function Profile() {
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
     const tokenData = JSON.parse(localStorage.getItem('admin'));
     console.log("tokendata is :",tokenData);
   const token = tokenData.token;
@@ -23,7 +25,7 @@ function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch('http://localhost:4000/admin/profile', {
+        const response = await fetch(`${apiUrl}/admin/profile`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -56,7 +58,7 @@ const handelformsubmit=async(e)=>{
       password: password,
       newpassword: newPassword,
     };
-    const response= await fetch('http://localhost:4000/admin/profileupdate',{
+    const response= await fetch(`${apiUrl}/admin/profileupdate`,{
       method:'PUT',
       headers:{
         'Authorization':`Bearer ${token}`,

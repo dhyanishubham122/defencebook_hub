@@ -2,7 +2,7 @@ import React from 'react'
 
 function Aboutpage() {
   return (
-    <div>Aboutpage</div>
+    <div className='flex justify-center items-center h-screen'>Aboutpage</div>
   )
 }
 

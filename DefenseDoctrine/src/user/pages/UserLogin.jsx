@@ -6,6 +6,8 @@ import { useContext } from 'react';
 import { FcGoogle } from "react-icons/fc";
 
 const UserLogin = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
      const [email,setEmail]=useState('');
      const [password,setPassword]=useState('');
      const [error,setError]=useState('');
@@ -16,7 +18,7 @@ const UserLogin = () => {
         e.preventDefault();
         setError('');
         try {
-            const response = await fetch('http://localhost:4000/user/login', {
+            const response = await fetch(`${apiUrl}/user/login`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email, password }),
@@ -83,7 +85,7 @@ const UserLogin = () => {
           </div>
         </form>
         <div className="flex items-center justify-center">
-        <button onClick={() => {window.location.href = "http://localhost:4000/user/auth/google";}}  className="flex items-center justify-center bg-white text-gray-700 mt-2 px-7 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-300 hover:bg-gray-50">
+        <button onClick={() => {window.location.href = `${apiUrl}/user/auth/google`;}}  className="flex items-center justify-center bg-white text-gray-700 mt-2 px-7 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-300 hover:bg-gray-50">
       <FcGoogle className="text-center" size={20} /> Sign in with Google</button>
 </div>
         <p className="text-center text-gray-500 text-xs mt-4">

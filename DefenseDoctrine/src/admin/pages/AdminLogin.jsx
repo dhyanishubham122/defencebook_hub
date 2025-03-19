@@ -3,6 +3,7 @@ import { AuthContext } from '../../context/AuthContext'
 import { useState,useEffect,useContext } from 'react'
 import {useNavigate} from 'react-router-dom';
 function AdminLogin() {
+  const apiUrl = import.meta.env.VITE_API_URL;
   
     const {login}=useContext(AuthContext);
     const [email, setEmail] = useState("");
@@ -13,7 +14,7 @@ function AdminLogin() {
             const handleSubmit = async(e) => {
                 e.preventDefault();
                 try{
-                    const response=await fetch("http://localhost:4000/admin/login",
+                    const response=await fetch(`${apiUrl}/admin/login`,
                         {
                             method: 'POST',
                             headers: {

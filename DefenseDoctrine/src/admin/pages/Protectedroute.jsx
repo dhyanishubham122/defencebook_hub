@@ -4,6 +4,7 @@ import { AuthContext } from '../../context/AuthContext';
 import {jwtDecode} from "jwt-decode"; // Remove curly braces here
 
 function Protectedroute({ children }) {
+ 
   const { admin,loading } = useContext(AuthContext);
   const [isTokenValid, setIsTokenValid] = useState(true); // Tracks token validity
   const [message, setMessage] = useState(""); // Tracks messages for the user

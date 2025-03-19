@@ -3,6 +3,8 @@ import { ToastContainer, toast } from 'react-toastify'; // For toast notificatio
 import 'react-toastify/dist/ReactToastify.css'; // Toast styles
 
 function Update() {
+  const apiUrl = import.meta.env.VITE_API_URL;
+    
   const categories = ['war', 'victories', 'training', 'defence', 'terrorism', 'officertalk', 'other'];
   const [books, setBooks] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -23,7 +25,7 @@ function Update() {
 
   const fetchBooks = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/admin/books?category=${selectedCategory}&page=${currentPage}&limit=9`, {
+      const response = await fetch(`${apiUrl}/admin/books?category=${selectedCategory}&page=${currentPage}&limit=9`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +72,7 @@ function Update() {
     const token = tokenData.token;
 
     try {
-      const response = await fetch(`http://localhost:4000/admin/updatebook/${bookId}`, {
+      const response = await fetch(`${apiUrl}/admin/updatebook/${bookId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -122,7 +124,7 @@ function Update() {
           {books.map((book) => (
             <div key={book.id} className="max-w-xs rounded-lg overflow-hidden shadow-lg bg-white">
               <img
-                src={`http://localhost:4000/${book.image}`}
+                src={`${apiUrl}/${book.image}`}
                 alt="book cover"
                 className="w-full h-48 object-cover"
               />

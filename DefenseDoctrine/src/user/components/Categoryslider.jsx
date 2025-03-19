@@ -7,12 +7,13 @@ import FlipCard from '../components/FlipCard';
 
 const CategorySlider = () => {
   const [categories, setCategories] = useState([]);
-
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
   // Fetch categories from the backend
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/user/categories'); 
+        const response = await axios.get(` ${apiUrl}/user/categories`); 
         console.log("re",response.data);// Replace with your backend endpoint
         setCategories(response.data.categories);
       } catch (error) {

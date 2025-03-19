@@ -14,17 +14,18 @@ function Bookdetails() {
   const [pageNumber, setPageNumber] = useState(1);
   const [scale, setScale] = useState(1);
   const pdfViewerRef = useRef();
-
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
   const queryparam = new URLSearchParams(window.location.search);
   const title = queryparam.get("title");
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/user/book?title=${title}`);
+        const response = await axios.get(`${apiUrl}/user/book?title=${title}`);
         if (response.data.length > 0) {
           setBook(response.data[0]);
-          setPdfUrl(encodeURI(`http://localhost:4000/${response.data[0].pdfUrl}`));
+          setPdfUrl(encodeURI(`${apiUrl}/${response.data[0].pdfUrl}`));
         } else {
           setBook(null);
         }
@@ -63,7 +64,7 @@ function Bookdetails() {
   {/* Background Image with Overlay */}
   <div 
     className="absolute inset-0 bg-cover bg-center filter brightness-75" 
-    style={{ backgroundImage: `url(http://localhost:4000/${book.image})` }}>
+    style={{ backgroundImage: `url(${apiUrl}/${book.image})` }}>
   </div>
 
   {/* Glassmorphic Book Details Card */}
@@ -71,7 +72,7 @@ function Bookdetails() {
     {/* Book Cover Image */}
     <div className="w-48 h-64 md:w-56 md:h-72 overflow-hidden rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300">
       <img 
-        src={`http://localhost:4000/${book.image}`} 
+        src={`${apiUrl}/${book.image}`} 
         alt={book.title} 
         className="w-full h-full object-cover"
       />

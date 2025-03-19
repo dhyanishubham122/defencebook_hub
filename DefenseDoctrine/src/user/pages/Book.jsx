@@ -3,6 +3,8 @@ import BookCard from '../components/bookcard';
 import axios from 'axios';
 
 function Book() {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    
     const [books, setBooks] = useState([]);
     const [error, setError] = useState('');  // Store "No results found" message
     const [featuredbooks,setFeaturedbooks]=useState([]);
@@ -17,7 +19,7 @@ function Book() {
     useEffect(() => {
         const fetchFeaturedBooks = async () => {
             try {
-                const response = await axios.get(`http://localhost:4000/user/book`); 
+                const response = await axios.get(`${apiUrl}/user/book`); 
                 setBooks(response.data);
                 if (category) {
                     setFeaturedbooks(response.data.filter(book => book.category === category));
@@ -48,7 +50,7 @@ function Book() {
                 Object.entries(filters).filter(([_, value]) => value)
             );
             const queryParams = new URLSearchParams(filteredParams).toString();
-            const url = `http://localhost:4000/user/book?${queryParams}`;
+            const url = `${apiUrl}/user/book?${queryParams}`;
             const response = await fetch(url);
 
             if (!response.ok) {

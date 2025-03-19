@@ -7,11 +7,12 @@ import BookCard from '../components/bookcard';
 
 const App = () => {
   const [featuredBooks, setFeaturedBooks] = useState([]);
-
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
   useEffect(() => {
     const fetchFeaturedBooks = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/user/book'); // Replace with your API endpoint
+        const response = await axios.get(`${apiUrl}/user/book`); // Replace with your API endpoint
         setFeaturedBooks(response.data);
       } catch (error) {
         console.error('Error fetching featured books:', error);

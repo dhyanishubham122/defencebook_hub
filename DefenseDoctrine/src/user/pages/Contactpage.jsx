@@ -4,6 +4,8 @@ import { useState,useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 const Contactpage = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [userName,setUsername]=useState('');
   const [email,setEmail]=useState('');
   const [message,setMessage]=useState('');
@@ -11,7 +13,7 @@ const Contactpage = () => {
   const handleformSubmit=async(e)=>{
    e.preventDefault();
     try{
-     const response=await fetch('http://localhost:4000/contact/contactform',{
+     const response=await fetch(`${apiUrl}/contact/contactform`,{
       method:'POST',
       headers:{
         'Content-Type':'application/json',

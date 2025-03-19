@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 const Booksview = () => {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    
     const [books, setBooks] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
@@ -12,7 +14,7 @@ const Booksview = () => {
     // Fetch books
     const fetchBooks = async () => {
         try {
-            const url = `http://localhost:4000/admin/books?category=${selectedCategory}&page=${currentPage}&limit=9`;
+            const url = ` ${apiUrl}/admin/books?category=${selectedCategory}&page=${currentPage}&limit=9`;
             const response = await fetch(url);
             console.log("response is :",response);
             if (!response.ok) throw new Error('Failed to fetch books');
@@ -65,7 +67,7 @@ const Booksview = () => {
                 {books.map((book) => (
                     <div key={book._id} className="bg-white rounded-lg shadow-md overflow-hidden">
                         <img
-                            src={`http://localhost:4000/${book.image}`}
+                            src={`${apiUrl}/${book.image}`}
                             alt={book.title}
                             className="w-full h-48 object-cover"
                         />
