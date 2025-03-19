@@ -9,10 +9,9 @@ function App() {
       <Route path="/*" element={<UserRouter />} />
 
       {/* Admin Routes */}
-      <Route path="admin/*" element={<AdminRouter />} />
+      <Route path="/admin/*" element={<AdminRouter />} />
     </Routes>
   );
 }
 
 export default App;
-ad
