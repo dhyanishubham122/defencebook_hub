@@ -1,6 +1,7 @@
 const express=require('express');
 const Book=require('../models/Books');
 const router=express.Router();
+const passport=require('passport');
 const path=require('path');
 const jwt=require('jsonwebtoken');
 const bcrypt=require("bcryptjs");
@@ -8,6 +9,7 @@ const User =require('../models/User')
 const authUserMiddleware=require('../middleware/authUserMiddleware')
 // chat  routes 
 const Conversation = require("../models/conversation");
+
 // Start a new conversation
   router.post('/conversation', async (req, res) => {
     try {
@@ -34,36 +36,36 @@ const Conversation = require("../models/conversation");
       res.status(500).json({ error: err.message });
     }
   });
-  router.post('/message', async (req, res) => {
-    try {
-      const { conversationId, senderId, content } = req.body;
+  // router.post('/message', async (req, res) => {
+  //   try {
+  //     const { conversationId, senderId, content } = req.body;
   
-      let newMessage = {
-        sender: senderId,
-        content,
-        timestamp: new Date(),
-        read: false,
-      };
+  //     let newMessage = {
+  //       sender: senderId,
+  //       content,
+  //       timestamp: new Date(),
+  //       read: false,
+  //     };
   
-      let conversation = await Conversation.findByIdAndUpdate(
-        conversationId,
-        { 
-          $push: { messages: newMessage }, 
-          $set: { lastMessage: newMessage }
-        },
-        { new: true } // Return updated conversation
-      );
+  //     let conversation = await Conversation.findByIdAndUpdate(
+  //       conversationId,
+  //       { 
+  //         $push: { messages: newMessage }, 
+  //         $set: { lastMessage: newMessage }
+  //       },
+  //       { new: true } // Return updated conversation
+  //     );
   
-      if (!conversation) {
-        return res.status(404).json({ error: "Conversation not found" });
-      }
+  //     if (!conversation) {
+  //       return res.status(404).json({ error: "Conversation not found" });
+  //     }
   
-      res.status(200).json(conversation);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: "Server error" });
-    }
-  });
+  //     res.status(200).json(conversation);
+  //   } catch (err) {
+  //     console.error(err);
+  //     res.status(500).json({ message: "Server error" });
+  //   }
+  // });
   
   router.get('/chat/:conversationId', async (req, res) => {
     try {
@@ -86,12 +88,28 @@ const Conversation = require("../models/conversation");
       return res.status(500).json({ message: "Server error" });  // Ensure return in catch block
     }
   });
-  
-  
-// end chat routes 
-
-
-
+  router.post('/markasread',async (req,res)=>{
+    const {conversationid,receiverId}=req.body;
+    try{
+     const conversation = await Conversation.findById(conversationid);
+     if(!conversation){
+      return res.status(404).json({ error: "Conversation not found" });
+     }
+     conversation.messages.forEach(msg=>{
+      if(msg.sender.toString()!==receiverId && !msg.read){
+        msg.read=true;
+      }
+    
+     });
+     await conversation.save();
+     return res.status(200).json({success: true, message: "messages marked as read" });
+    }
+    catch(err){
+      console.error(err);
+      res.status(500).json({ message: "Server error" });
+    }
+   })
+// end chat routes
 
 router.get('/profile',authUserMiddleware,async(req,res)=>{
   try{
@@ -104,7 +122,25 @@ router.get('/profile',authUserMiddleware,async(req,res)=>{
     return res.status(500).json({ message: "Server error" });
   }
 })
+// for oath sigin with google 
+router.get('/auth/google',passport.authenticate("google",{scope:["profile","email"]}));
+// router.get("/auth/google/callback",passport.authenticate("google",{
+//   successRedirect:"http://localhost:5173/chat",
+//   failureRedirect:"http://localhost:5173/login",
+// }))
+router.get( "/auth/google/callback",  passport.authenticate("google", { session: false }),(req, res) => {
+    if (!req.user) {
+      return res.redirect("http://localhost:5173/login");
+    }
 
+    const token = req.user.token;
+    // Redirect to frontend with token
+    // res.redirect(`http://localhost:5173/chat?token=${token}`);
+    res.redirect(`http://localhost:5173/google-auth-handler?token=${token}`);
+
+  }
+);
+// for jwt 
 router.post('/login',async(req,res)=>{
   try{
     const {email,password}=req.body;

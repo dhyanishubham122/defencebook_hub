@@ -13,10 +13,12 @@ const UserAuthProvider = ({ children }) => {
     //     localStorage.setItem('User',JSON.stringify(userdata));
     // }
     const login = (userdata) => {
+        console.log("in auth context");
         console.log(userdata);
         setUser(userdata);
         try {
             localStorage.setItem('User', JSON.stringify(userdata));
+            console.log("tokrn from google sigin is here:",userdata);
         } catch (err) {
             console.error("Failed to store user data:", err);
         }

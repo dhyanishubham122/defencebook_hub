@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     chatEnabled: {
         type: Boolean,
         default: false  
-    }
+    },
 });
 const User=mongoose.model('User',userSchema);
 module.exports=User;

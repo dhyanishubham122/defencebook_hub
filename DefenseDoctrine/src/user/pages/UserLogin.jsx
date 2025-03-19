@@ -3,6 +3,7 @@ import { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuthContext } from '../../context/UserAuthContext'
 import { useContext } from 'react';
+import { FcGoogle } from "react-icons/fc";
 
 const UserLogin = () => {
      const [email,setEmail]=useState('');
@@ -71,15 +72,20 @@ const UserLogin = () => {
               placeholder="Enter Password"
             />
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center">
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-[90px] rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
               Login
             </button>
+            
           </div>
         </form>
+        <div className="flex items-center justify-center">
+        <button onClick={() => {window.location.href = "http://localhost:4000/user/auth/google";}}  className="flex items-center justify-center bg-white text-gray-700 mt-2 px-7 py-2 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-300 hover:bg-gray-50">
+      <FcGoogle className="text-center" size={20} /> Sign in with Google</button>
+</div>
         <p className="text-center text-gray-500 text-xs mt-4">
           Don't have an account? <a href="/signup" className="text-blue-500 hover:text-blue-700">Sign Up</a>
         </p>

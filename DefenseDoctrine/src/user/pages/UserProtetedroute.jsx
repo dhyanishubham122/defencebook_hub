@@ -9,11 +9,12 @@ function UserProtectedRoute({ children }) {
     const [message, setMessage] = useState("Checking authentication...");
     const [redirect, setRedirect] = useState(false);
     const [token, setToken] = useState(localStorage.getItem('User'));
-
+ console.log("in userprotected route");
     useEffect(() => {
         if (loading) return;
 
         if (token) {
+            console.log("in userprotected route token",token);
             try {
                 const decoded = jwtDecode(token);
                 const currentTime = new Date().getTime() / 1000;
