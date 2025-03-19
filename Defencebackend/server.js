@@ -45,7 +45,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const io=new Server(server,{
     cors:{
-       origin: 'http://localhost:5173',
+       origin: '*',
     }
 });
 require('./socket')(io)
