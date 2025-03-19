@@ -1,5 +1,6 @@
 import {io} from "socket.io-client"
-const socket=io("http://localhost:4000",{
+const apiUrl = import.meta.env.VITE_API_URL;
+const socket=io(`${apiUrl}`,{
     withCredentials:true,
     autoConnect:false
 });

@@ -20,7 +20,7 @@ const server = createServer(app);
 const PORT = process.env.PORT || 4000;
 // app.use(helmet());
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({ origin: '*' }));
 
 // Enable CORS for all requests
 // seesion manegment for passport thi is sesion middleware
@@ -36,7 +36,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 // Set CORS Headers for Static Files (Before Serving)
 app.use('/uploads', (req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     next();
 });
 
