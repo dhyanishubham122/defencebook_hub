@@ -10,7 +10,7 @@ const router=express.Router();
 const path=require('path');
 const verifyTokenandRole=require('../middleware/authAdminMiddleware');
 const fs = require("fs");
-
+const uploadOnCloudinary=require('../cloudnary/cloudnary.js')
 const ensureDirectoryExists = (directory) => {
     if (!fs.existsSync(directory)) {
       fs.mkdirSync(directory, { recursive: true });
@@ -53,9 +53,11 @@ const ensureDirectoryExists = (directory) => {
         const { title, author, description, category, rating, purchasedLinkUrl } = req.body;
   
         // Extract uploaded file paths
-        const image = req.files["image"] ? `uploads/${req.files["image"][0].filename}` : "";
-        const pdfUrl = req.files["pdf"] ? `uploads/pdf/${req.files["pdf"][0].filename}` : "";
-  
+        // const image = req.files["image"] ? `uploads/${req.files["image"][0].filename}` : "";
+        // const pdfUrl = req.files["pdf"] ? `uploads/pdf/${req.files["pdf"][0].filename}` : "";
+        let image = req.files["image"]?.[0]?.path ? await uploadOnCloudinary(req.files["image"][0].path) : "";
+        let pdfUrl = req.files["pdf"]?.[0]?.path ? await uploadOnCloudinary(req.files["pdf"][0].path) : "";
+        
         // Check if the book already exists
         const existingBook = await Book.findOne({ title });
         if (existingBook) {

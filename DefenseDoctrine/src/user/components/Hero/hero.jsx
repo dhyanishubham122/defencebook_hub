@@ -45,7 +45,7 @@ function Hero() {
       <div className="w-full md:w-1/2 mt-8 md:mt-0 flex flex-col items-center px-4 md:px-8">
         {selectedBook && (
           <img
-            src={` ${apiUrl}/${selectedBook.image}`}
+            src={` ${selectedBook.image}`}
             alt={selectedBook.title}
             className="max-w-lg h-96 object-cover rounded-xl shadow-2xl transform hover:scale-105 transition duration-300"
           />
@@ -56,7 +56,7 @@ function Hero() {
           {books.map((book) => (
             <img
               key={book._id}
-              src={` ${apiUrl}/${book.image}`}
+              src={` ${book.image}`}
               alt={book.title}
               className={`w-20 h-20 md:w-24 md:h-24 object-cover rounded-lg cursor-pointer transition duration-300 ${
                 selectedBook?._id === book._id

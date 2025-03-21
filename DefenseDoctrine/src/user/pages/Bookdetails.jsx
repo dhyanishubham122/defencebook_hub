@@ -25,7 +25,7 @@ function Bookdetails() {
         const response = await axios.get(`${apiUrl}/user/book?title=${title}`);
         if (response.data.length > 0) {
           setBook(response.data[0]);
-          setPdfUrl(encodeURI(`${apiUrl}/${response.data[0].pdfUrl}`));
+          setPdfUrl(encodeURI(`${response.data[0].pdfUrl}`));
         } else {
           setBook(null);
         }
@@ -64,7 +64,7 @@ function Bookdetails() {
   {/* Background Image with Overlay */}
   <div 
     className="absolute inset-0 bg-cover bg-center filter brightness-75" 
-    style={{ backgroundImage: `url(${apiUrl}/${book.image})` }}>
+    style={{ backgroundImage: `url(${book.image})` }}>
   </div>
 
   {/* Glassmorphic Book Details Card */}
@@ -72,7 +72,7 @@ function Bookdetails() {
     {/* Book Cover Image */}
     <div className="w-48 h-64 md:w-56 md:h-72 overflow-hidden rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300">
       <img 
-        src={`${apiUrl}/${book.image}`} 
+        src={`${book.image}`} 
         alt={book.title} 
         className="w-full h-full object-cover"
       />
@@ -130,6 +130,7 @@ function Bookdetails() {
             <button onClick={() => window.open(pdfUrl, "_blank")} className="px-4 py-2 bg-green-400 text-white rounded-md hover:bg-green-700 transition">
               🖨️ Print
             </button>
+            
             <button onClick={() => {
               const link = document.createElement("a");
               link.href = pdfUrl;

@@ -11,7 +11,7 @@ const BookCard = ({ book }) => {
   return (
     <div className="w-72 bg-white/80 backdrop-blur-md rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-200 hover:border-gray-300" onClick={handledetails}>
       <img
-        src={`${apiUrl}/${book.image}`}
+        src={`${book.image}`}
         alt={book.title}
         className="w-full h-64 object-cover"
       />
