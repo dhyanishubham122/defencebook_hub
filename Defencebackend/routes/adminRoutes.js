@@ -50,6 +50,8 @@ const ensureDirectoryExists = (directory) => {
     ]),
     async (req, res) => {
       try {
+        console.log("Received Files:", req.files);
+      console.log("Received Body:", req.body);
         const { title, author, description, category, rating, purchasedLinkUrl } = req.body;
   
         // Extract uploaded file paths

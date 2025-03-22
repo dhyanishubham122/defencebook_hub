@@ -33,7 +33,7 @@ const uploadoncloudinary = async(localfilepath)=>{
       console.log("file uploaded",uploadResult);
       fs.unlinkSync(localfilepath);
 
-      return uploadResult.url;
+      return uploadResult.secure_url;
   } 
   catch (error) {
      // Delete the file in case of an error

@@ -96,7 +96,7 @@ catch(error){
                 {books.map((book) => (
                     <div key={book._id} className="bg-white rounded-lg shadow-md overflow-hidden">
                         <img
-                            src={` ${apiUrl}/${book.image}`}
+                            src={` ${book.image}`}
                             alt={book.title}
                             className="w-full h-48 object-cover"
                         />

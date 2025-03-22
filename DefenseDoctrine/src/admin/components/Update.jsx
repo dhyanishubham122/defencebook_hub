@@ -124,7 +124,7 @@ function Update() {
           {books.map((book) => (
             <div key={book.id} className="max-w-xs rounded-lg overflow-hidden shadow-lg bg-white">
               <img
-                src={`${apiUrl}/${book.image}`}
+                src={`${book.image}`}
                 alt="book cover"
                 className="w-full h-48 object-cover"
               />

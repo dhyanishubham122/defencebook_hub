@@ -63,6 +63,7 @@ const Add = () => {
       });
 
       if (!response.ok) {
+        console.log("rponse is :",response);
         throw new Error("Failed to add data");
       }
 
