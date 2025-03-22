@@ -59,7 +59,12 @@ const ensureDirectoryExists = (directory) => {
         // const pdfUrl = req.files["pdf"] ? `uploads/pdf/${req.files["pdf"][0].filename}` : "";
         let image = req.files["image"]?.[0]?.path ? await uploadOnCloudinary(req.files["image"][0].path) : "";
         let pdfUrl = req.files["pdf"]?.[0]?.path ? await uploadOnCloudinary(req.files["pdf"][0].path) : "";
-        
+         console.log("image ",image);
+         console.log("pdfUrl",pdfUrl);
+         if (!image || !pdfUrl) {
+          return res.status(400).json({ message: "Image and PDF are required." });
+        }
+  
         // Check if the book already exists
         const existingBook = await Book.findOne({ title });
         if (existingBook) {
