@@ -16,6 +16,11 @@ const uploadoncloudinary = async(localfilepath)=>{
       
     // Upload an image
   try {
+     // Check if the file exists
+     if (!fs.existsSync(localfilepath)) {
+      console.log("File does not exist:", localfilepath);
+      return null;
+  }
     if(!localfilepath){
         console.log("local filepath is null")
         return null;
@@ -36,7 +41,9 @@ const uploadoncloudinary = async(localfilepath)=>{
       return uploadResult.secure_url;
   } 
   catch (error) {
-     // Delete the file in case of an error
+     // Delete the file in case of an 
+     console.error("Error uploading to Cloudinary:", error);
+
      if (fs.existsSync(localfilepath)) {
         fs.unlinkSync(localfilepath);
     }
